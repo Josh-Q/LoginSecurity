@@ -12,13 +12,21 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 //    Override configure method with Basic Auth
+    // problem with Basic Auth : cannot log out as user/pass will always be sent inside the request header
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                // white listing some pages
+                .antMatchers("/","index","/css/*","/js/*")
+                .permitAll()
+                // white listing some pages
                 .anyRequest()
                 .authenticated()
                 .and()
                 .httpBasic();
     }
 //    Override configure method with Basic Auth
+
+
+
 }
