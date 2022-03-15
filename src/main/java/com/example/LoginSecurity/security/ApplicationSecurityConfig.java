@@ -1,19 +1,16 @@
 package com.example.LoginSecurity.security;
 
+import com.example.LoginSecurity.auth.ApplicationUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,12 +24,14 @@ import static com.example.LoginSecurity.security.ApplicationUserRole.*;
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationUserService applicationUserService;
 
     // autowiring here autowires all of the services / variables
     @Autowired
     // autowiring here autowires all of the services / variables
-    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder) {
+    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, ApplicationUserService applicationUserService) {
         this.passwordEncoder = passwordEncoder;
+        this.applicationUserService = applicationUserService;
     }
 
 //    ------------------------------BASIC AUTH -----------------------------------
@@ -145,43 +144,75 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
-    // how we retrieve user data from the database
-    @Override
+//    // how we retrieve user data from the mock data
+//    @Override
+//    @Bean
+//    protected UserDetailsService userDetailsService() {
+//        // Student user
+//        UserDetails player1 = User.builder()
+//                .username("player1")
+//                // apply the password encoder to the userDetailService
+//                .password(passwordEncoder.encode("password"))
+////                .roles(STUDENT.name())  // ROLE_STUDENT
+//                //
+//                .authorities(STUDENT.getGrantedAuthorities())
+//                //
+//                .build();
+//
+//        // Admin user
+//        UserDetails lindaUser = User.builder()
+//                .username("Linda")
+//                .password(passwordEncoder.encode("password"))
+////                        .roles(ADMIN.name()) // ROLE_ADMIN
+//                .authorities(ADMIN.getGrantedAuthorities())
+//                        .build();
+//
+//
+//        // Admin Trainee user
+//        UserDetails tomUser = User.builder()
+//                .username("tom")
+//                .password(passwordEncoder.encode("password"))
+////                .roles(ADMINTRAINEE.name())  // ROLE_ADMINTRAINEE
+//                .authorities(ADMINTRAINEE.getGrantedAuthorities())
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(
+//                player1,
+//                lindaUser,
+//                tomUser
+//        );
+//    }
+//    // how we retrieve user data from the mock data
+
+
+
+
+
+
+
+
+
+
+
+
+    // how we retrieve user data from custom class
     @Bean
-    protected UserDetailsService userDetailsService() {
-        // Student user
-        UserDetails player1 = User.builder()
-                .username("player1")
-                // apply the password encoder to the userDetailService
-                .password(passwordEncoder.encode("password"))
-//                .roles(STUDENT.name())  // ROLE_STUDENT
-                //
-                .authorities(STUDENT.getGrantedAuthorities())
-                //
-                .build();
-
-        // Admin user
-        UserDetails lindaUser = User.builder()
-                .username("Linda")
-                .password(passwordEncoder.encode("password"))
-//                        .roles(ADMIN.name()) // ROLE_ADMIN
-                .authorities(ADMIN.getGrantedAuthorities())
-                        .build();
-
-
-        // Admin Trainee user
-        UserDetails tomUser = User.builder()
-                .username("tom")
-                .password(passwordEncoder.encode("password"))
-//                .roles(ADMINTRAINEE.name())  // ROLE_ADMINTRAINEE
-                .authorities(ADMINTRAINEE.getGrantedAuthorities())
-                .build();
-
-        return new InMemoryUserDetailsManager(
-                player1,
-                lindaUser,
-                tomUser
-        );
+    public DaoAuthenticationProvider daoAuthenticationProvider(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(applicationUserService);
+        return provider;
     }
-    // how we retrieve user data from the database
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
+        }
+
+    // how we retrieve user data from custom class
+
+
+
+
+
 }
