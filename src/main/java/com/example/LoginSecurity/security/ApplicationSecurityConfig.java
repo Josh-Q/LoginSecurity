@@ -33,30 +33,74 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         this.passwordEncoder = passwordEncoder;
     }
 
+//    ------------------------------BASIC AUTH -----------------------------------
     //    Override configure method with Basic Auth
     // problem with Basic Auth : cannot log out as user/pass will always be sent inside the request header
+//    @Override
+//    public void configure(HttpSecurity http) throws Exception {
+//        http
+//                // CSRF generation while preventing frontend JS manipulation
+////                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+////                .and()
+//                // CSRF generation while preventing frontend JS manipulation
+//
+//                // disable csrf for convenience for now
+//                .csrf().disable()
+//                // disable csrf for convenience for now
+//                .authorizeRequests()
+//              // white listing some pages
+//                .antMatchers("/","index","/css/*","/js/*")
+//                .permitAll()
+//                // white listing some pages
+//                // access controlling some API for STUDENT role ( ROLE BASED AUTH )
+//                .antMatchers("/api/**")
+//                .hasRole(STUDENT.name())
+//                // access controlling some API for STUDENT role ( ROLE BASED AUTH )
+//                .anyRequest()
+//                .authenticated()
+//                .and()
+//                .httpBasic();
+//    }
+//    Override configure method with Basic Auth
+//    ------------------------------BASIC AUTH -----------------------------------
+
+
+    //    ------------------------------FORM BASED AUTH -----------------------------------
+//        Override configure method with FORM BASED AUTH
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                // CSRF generation while preventing frontend JS manipulation
-                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()
-                // CSRF generation while preventing frontend JS manipulation
+                .csrf().disable()
                 .authorizeRequests()
-              // white listing some pages
                 .antMatchers("/","index","/css/*","/js/*")
                 .permitAll()
-                // white listing some pages
-                // access controlling some API for STUDENT role ( ROLE BASED AUTH )
-                .antMatchers("/api/**")
+               .antMatchers("/api/**")
                 .hasRole(STUDENT.name())
-                // access controlling some API for STUDENT role ( ROLE BASED AUTH )
-                .anyRequest()
+              .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic();
+                .formLogin()
+                .loginPage("/login")
+                .permitAll();
     }
-//    Override configure method with Basic Auth
+//        Override configure method with FORM BASED AUTH
+
+
+
+
+
+
+    //    ------------------------------FORM BASED AUTH ------------------------------------
+
+
+
+
+
+
+
+
+
+
 
 
     // how we retrieve user data from the database
