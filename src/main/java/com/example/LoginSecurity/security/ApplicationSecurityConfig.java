@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
+import java.util.concurrent.TimeUnit;
+
 import static com.example.LoginSecurity.security.ApplicationUserRole.*;
 
 @Configuration
@@ -82,9 +84,20 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login")
                 .permitAll()
+
+
                 // force redirect to page after successful log
-                .defaultSuccessUrl("/courses", true);
+                .defaultSuccessUrl("/courses", true)
                 // force redirect to page after successful log
+
+
+                // extends remember me duration
+                .and()
+                .rememberMe()
+                .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21))
+                // some secure key used to help HASH the username / expiration time
+                .key("somethingverysecured");
+                // extends remember me duration
     }
 //        Override configure method with FORM BASED AUTH
 
