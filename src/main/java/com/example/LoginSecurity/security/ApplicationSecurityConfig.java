@@ -13,6 +13,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import static com.example.LoginSecurity.security.ApplicationUserRole.ADMIN;
+import static com.example.LoginSecurity.security.ApplicationUserRole.STUDENT;
+
 @Configuration
 @EnableWebSecurity
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -47,15 +50,24 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     @Bean
     protected UserDetailsService userDetailsService() {
+        // Student user
         UserDetails player1 = User.builder()
                 .username("player1")
                 // apply the password encoder to the userDetailService
                 .password(passwordEncoder.encode("p@ssw0rd"))
-                .roles("STUDENT")  // ROLE_STUDENT
+                .roles(STUDENT.name())  // ROLE_STUDENT
                 .build();
 
+        // Admin user
+        UserDetails lindaUser = User.builder()
+                .username("Linda")
+                .password(passwordEncoder.encode("password"))
+                        .roles(ADMIN.name())
+                        .build();
+
         return new InMemoryUserDetailsManager(
-                player1
+                player1,
+                lindaUser
         );
     }
     // how we retrieve user data from the database
