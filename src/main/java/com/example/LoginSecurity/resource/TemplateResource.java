@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TemplateResource {
 
     @GetMapping("login")
-    public String getLoginView(){
+    public String getLogin(){
         return "login";
+    }
+
+    @GetMapping("courses")
+    public String getCourses(){
+        return "courses";
     }
 
 }

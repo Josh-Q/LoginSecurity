@@ -81,7 +81,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .permitAll();
+                .permitAll()
+                // force redirect to page after successful log
+                .defaultSuccessUrl("/courses", true);
+                // force redirect to page after successful log
     }
 //        Override configure method with FORM BASED AUTH
 
