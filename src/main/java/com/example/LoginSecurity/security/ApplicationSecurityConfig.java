@@ -62,14 +62,18 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .username("player1")
                 // apply the password encoder to the userDetailService
                 .password(passwordEncoder.encode("password"))
-                .roles(STUDENT.name())  // ROLE_STUDENT
+//                .roles(STUDENT.name())  // ROLE_STUDENT
+                //
+                .authorities(STUDENT.getGrantedAuthorities())
+                //
                 .build();
 
         // Admin user
         UserDetails lindaUser = User.builder()
                 .username("Linda")
                 .password(passwordEncoder.encode("password"))
-                        .roles(ADMIN.name())
+//                        .roles(ADMIN.name()) // ROLE_ADMIN
+                .authorities(ADMIN.getGrantedAuthorities())
                         .build();
 
 
@@ -77,7 +81,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails tomUser = User.builder()
                 .username("tom")
                 .password(passwordEncoder.encode("password"))
-                .roles(ADMINTRAINEE.name())
+//                .roles(ADMINTRAINEE.name())  // ROLE_ADMINTRAINEE
+                .authorities(ADMINTRAINEE.getGrantedAuthorities())
                 .build();
 
         return new InMemoryUserDetailsManager(
