@@ -3,6 +3,7 @@ package com.example.LoginSecurity.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,6 +18,9 @@ import static com.example.LoginSecurity.security.ApplicationUserRole.*;
 
 @Configuration
 @EnableWebSecurity
+// Access Control
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+// Access Control
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
@@ -34,7 +38,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 // csrf disabling
-                .csrf().disable()
+//                .csrf().disable()
                 // csrf disabling
                 .authorizeRequests()
               // white listing some pages
