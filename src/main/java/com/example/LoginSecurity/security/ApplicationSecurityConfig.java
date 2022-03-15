@@ -38,6 +38,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/","index","/css/*","/js/*")
                 .permitAll()
                 // white listing some pages
+                // access controlling some API for STUDENT role ( ROLE BASED AUTH )
+                .antMatchers("/api/**")
+                .hasRole(STUDENT.name())
+                // access controlling some API for STUDENT role ( ROLE BASED AUTH )
                 .anyRequest()
                 .authenticated()
                 .and()
