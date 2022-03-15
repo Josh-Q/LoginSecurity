@@ -90,6 +90,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/courses", true)
                 // force redirect to page after successful log
 
+                //links to login.html where to extract these params
+                .passwordParameter("passwrd")
+                .usernameParameter("usrname")
+                //links to login.html where to extract these params
 
                 // extends remember me duration
                 .and()
@@ -99,6 +103,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .key("somethingverysecured")
                 // extends remember me duration
 
+
+                //links to login.html where to extract these params
+                .rememberMeParameter("rmb-me")
+                //links to login.html where to extract these params
 
 
                 // clear all the cookies when logging out and redirects back to login page
