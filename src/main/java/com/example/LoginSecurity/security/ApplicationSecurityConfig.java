@@ -13,8 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-import static com.example.LoginSecurity.security.ApplicationUserRole.ADMIN;
-import static com.example.LoginSecurity.security.ApplicationUserRole.STUDENT;
+import static com.example.LoginSecurity.security.ApplicationUserRole.*;
 
 @Configuration
 @EnableWebSecurity
@@ -33,8 +32,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     // problem with Basic Auth : cannot log out as user/pass will always be sent inside the request header
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                // white listing some pages
+        http
+                // csrf disabling
+                .csrf().disable()
+                // csrf disabling
+                .authorizeRequests()
+              // white listing some pages
                 .antMatchers("/","index","/css/*","/js/*")
                 .permitAll()
                 // white listing some pages
@@ -58,7 +61,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails player1 = User.builder()
                 .username("player1")
                 // apply the password encoder to the userDetailService
-                .password(passwordEncoder.encode("p@ssw0rd"))
+                .password(passwordEncoder.encode("password"))
                 .roles(STUDENT.name())  // ROLE_STUDENT
                 .build();
 
@@ -69,9 +72,18 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         .roles(ADMIN.name())
                         .build();
 
+
+        // Admin Trainee user
+        UserDetails tomUser = User.builder()
+                .username("tom")
+                .password(passwordEncoder.encode("password"))
+                .roles(ADMINTRAINEE.name())
+                .build();
+
         return new InMemoryUserDetailsManager(
                 player1,
-                lindaUser
+                lindaUser,
+                tomUser
         );
     }
     // how we retrieve user data from the database
