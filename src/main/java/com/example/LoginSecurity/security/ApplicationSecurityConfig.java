@@ -96,9 +96,27 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe()
                 .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21))
                 // some secure key used to help HASH the username / expiration time
-                .key("somethingverysecured");
+                .key("somethingverysecured")
                 // extends remember me duration
+
+
+
+                // clear all the cookies when logging out and redirects back to login page
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID", "remember-me")
+                .logoutSuccessUrl("/login");
+                // clear all the cookies when logging out and redirects back to login page
+
+
+
     }
+
+
+
 //        Override configure method with FORM BASED AUTH
 
 
