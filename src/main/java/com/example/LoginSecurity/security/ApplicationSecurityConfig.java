@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import static com.example.LoginSecurity.security.ApplicationUserRole.*;
 
@@ -37,9 +38,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                // csrf disabling
-//                .csrf().disable()
-                // csrf disabling
+                // CSRF generation while preventing frontend JS manipulation
+                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
+                // CSRF generation while preventing frontend JS manipulation
                 .authorizeRequests()
               // white listing some pages
                 .antMatchers("/","index","/css/*","/js/*")
