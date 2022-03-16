@@ -1,6 +1,7 @@
 package com.example.LoginSecurity.security;
 
 import com.example.LoginSecurity.auth.ApplicationUserService;
+import com.example.LoginSecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.concurrent.TimeUnit;
@@ -68,76 +70,89 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     //    ------------------------------FORM BASED AUTH -----------------------------------
 //        Override configure method with FORM BASED AUTH
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/","index","/css/*","/js/*")
-                .permitAll()
-               .antMatchers("/api/**")
-                .hasRole(STUDENT.name())
-              .anyRequest()
-                .authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .permitAll()
-
-
-                // force redirect to page after successful log
-                .defaultSuccessUrl("/courses", true)
-                // force redirect to page after successful log
-
-                //links to login.html where to extract these params
-                .passwordParameter("passwrd")
-                .usernameParameter("usrname")
-                //links to login.html where to extract these params
-
-                // extends remember me duration
-                .and()
-                .rememberMe()
-                .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21))
-                // some secure key used to help HASH the username / expiration time
-                .key("somethingverysecured")
-                // extends remember me duration
-
-
-                //links to login.html where to extract these params
-                .rememberMeParameter("rmb-me")
-                //links to login.html where to extract these params
-
-
-                // clear all the cookies when logging out and redirects back to login page
-                .and()
-                .logout()
-                .logoutUrl("/logout")
-                .clearAuthentication(true)
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "remember-me")
-                .logoutSuccessUrl("/login");
-                // clear all the cookies when logging out and redirects back to login page
-
-
-
-    }
+//    @Override
+//    public void configure(HttpSecurity http) throws Exception {
+//        http
+//                .csrf().disable()
+//                .authorizeRequests()
+//                .antMatchers("/","index","/css/*","/js/*")
+//                .permitAll()
+//               .antMatchers("/api/**")
+//                .hasRole(STUDENT.name())
+//              .anyRequest()
+//                .authenticated()
+//                .and()
+//                .formLogin()
+//                .loginPage("/login")
+//                .permitAll()
+//
+//
+//                // force redirect to page after successful log
+//                .defaultSuccessUrl("/courses", true)
+//                // force redirect to page after successful log
+//
+//                //links to login.html where to extract these params
+//                .passwordParameter("passwrd")
+//                .usernameParameter("usrname")
+//                //links to login.html where to extract these params
+//
+//                // extends remember me duration
+//                .and()
+//                .rememberMe()
+//                .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21))
+//                // some secure key used to help HASH the username / expiration time
+//                .key("somethingverysecured")
+//                // extends remember me duration
+//
+//
+//                //links to login.html where to extract these params
+//                .rememberMeParameter("rmb-me")
+//                //links to login.html where to extract these params
+//
+//
+//                // clear all the cookies when logging out and redirects back to login page
+//                .and()
+//                .logout()
+//                .logoutUrl("/logout")
+//                .clearAuthentication(true)
+//                .invalidateHttpSession(true)
+//                .deleteCookies("JSESSIONID", "remember-me")
+//                .logoutSuccessUrl("/login");
+//                // clear all the cookies when logging out and redirects back to login page
+//
+//
+//
+//    }
 
 
 
 //        Override configure method with FORM BASED AUTH
 
-
-
-
-
-
     //    ------------------------------FORM BASED AUTH ------------------------------------
 
 
+    //    ------------------------------JWT BASED AUTH ------------------------------------
+
+    @Override
+    public void configure(HttpSecurity http) throws Exception{
+        http
+                .csrf().disable()
+                // session will not be stored in the database now
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                // adds the JWT authentication
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+                .authorizeRequests()
+                .antMatchers("/","index","/css/*","/js/*")
+                .permitAll()
+                .antMatchers("/api/**")
+                .hasRole(STUDENT.name())
+                .anyRequest()
+                .authenticated();
+    }
 
 
-
-
+    //    ------------------------------JWT BASED AUTH ------------------------------------
 
 
 
