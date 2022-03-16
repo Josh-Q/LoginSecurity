@@ -1,6 +1,8 @@
 package com.example.LoginSecurity.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -8,9 +10,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.Date;
 
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -42,5 +49,28 @@ Authentication authentication = new UsernamePasswordAuthenticationToken(
     throw new RuntimeException(e);
 }
 
+    }
+
+    // sends a JWT token to client upon successful authentication
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            FilterChain chain,
+                                            Authentication authResult) throws IOException, ServletException {
+
+
+        String key = "securesecuresecuresecuresecuresecuresecure";
+        // please use a much more secure key instead of the word "securesecuresecuresecuresecuresecuresecure"
+
+        String token = Jwts.builder()
+                .setSubject(authResult.getName())
+                        .claim("authorities",authResult.getAuthorities())
+                                .setIssuedAt(new Date())
+                                        .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))
+                                                            .signWith(Keys.hmacShaKeyFor(key.getBytes()))
+                .compact();
+
+        // add the token to the response header
+        response.addHeader("Authorization","Bearer " + token);
     }
 }
