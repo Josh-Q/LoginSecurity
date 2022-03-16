@@ -1,6 +1,7 @@
 package com.example.LoginSecurity.security;
 
 import com.example.LoginSecurity.auth.ApplicationUserService;
+import com.example.LoginSecurity.jwt.JwtTokenVerifier;
 import com.example.LoginSecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -142,6 +143,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // adds the JWT authentication
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager()))
+                // add the JwtTokenVerifier filter after JwtUsernameAndPasswordAuthenticationFilter
+                .addFilterAfter(new JwtTokenVerifier(),JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/","index","/css/*","/js/*")
                 .permitAll()
